@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vice Cover Studio — GTA-style cover art maker</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main class="app">
+  <section class="controls" aria-label="Cover controls">
+    <h1>Vice Cover Studio</h1>
+    <p class="tagline">A photo and a caption, made into GTA-style cover art for Leonida.</p>
+
+    <label class="field">Caption
+      <input id="caption" type="text" maxlength="40" value="VICE CITY">
+    </label>
+    <label class="field">Subtitle
+      <input id="subtitle" type="text" maxlength="40" value="Leonida Nights">
+    </label>
+
+    <div class="group">
+      <span class="group-label">Layout</span>
+      <div class="button-row">
+        <button type="button" data-layout="poster" class="active">Poster</button>
+        <button type="button" data-layout="grid">Grid 2×2</button>
+        <button type="button" data-layout="single">Single</button>
+        <button type="button" data-layout="story">Story</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <span class="group-label">Colour grade</span>
+      <div class="button-row">
+        <button type="button" data-grade="sunset" class="active">Sunset</button>
+        <button type="button" data-grade="neon">Neon</button>
+        <button type="button" data-grade="pastel">Pastel</button>
+        <button type="button" data-grade="noir">Noir</button>
+        <button type="button" data-grade="original">Original</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <span class="group-label">Photos — one per panel</span>
+      <div class="button-row">
+        <button type="button" data-slot="0" class="active">Panel 1</button>
+        <button type="button" data-slot="1">Panel 2</button>
+        <button type="button" data-slot="2">Panel 3</button>
+        <button type="button" data-slot="3">Panel 4</button>
+      </div>
+      <div class="uploads">
+        <label class="upload">Panel 1 photo <input type="file" accept="image/*" data-upload="0"></label>
+        <label class="upload">Panel 2 photo <input type="file" accept="image/*" data-upload="1"></label>
+        <label class="upload">Panel 3 photo <input type="file" accept="image/*" data-upload="2"></label>
+        <label class="upload">Panel 4 photo <input type="file" accept="image/*" data-upload="3"></label>
+      </div>
+      <div class="button-row">
+        <button type="button" id="demoPhotos">Use demo photos</button>
+        <button type="button" id="resetView">Reset framing</button>
+      </div>
+    </div>
+
+    <div class="group">
+      <span class="group-label">Export PNG</span>
+      <div class="button-row">
+        <button type="button" data-export="square">1080 × 1080</button>
+        <button type="button" data-export="story">1080 × 1350</button>
+        <button type="button" data-export="wide">1920 × 1080</button>
+      </div>
+    </div>
+
+    <p id="sceneLabel" class="hint" role="status"></p>
+    <p id="status" class="hint" role="status"></p>
+    <p class="fineprint">Runs fully offline in your browser. Photos never leave this machine.
+      Original art drawn in code — no Rockstar logo, artwork or font.</p>
+  </section>
+  <section class="stage-wrap">
+    <canvas id="stage" width="1080" height="1080" aria-label="The cover"></canvas>
+  </section>
+</main>
+<script type="module" src="./src/editor.js"></script>
+</body>
+</html>
