@@ -2,102 +2,84 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Neon Coast — GTA 6 Style Cover Studio</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Neon Coast — GTA 6 Cover Art Studio</title>
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header id="topbar">
-  <div class="brand">
-    <span class="brand-mark">NC</span>
-    <div>
-      <strong>NEON COAST</strong>
-      <small>Cover Studio · Vice City nights, your photos</small>
-    </div>
-  </div>
-  <div class="toolbar" id="toolbar">
-    <span class="chip chip-face" id="faceChip" title="Face-aware crop centres every panel on the face it finds">◉ Face-aware crop: <b>ON</b></span>
-    <span class="chip" id="sizeChips" title="Export size presets"></span>
-    <button class="btn btn-gold" id="btnExportAll" type="button">⬇ Export All 3 Sizes</button>
-    <button class="btn" id="btnSurprise" type="button">🎲 Surprise me</button>
-    <button class="btn" id="btnUndo" type="button" title="Undo">↩ Undo</button>
-    <button class="btn" id="btnRedo" type="button" title="Redo">↪ Redo</button>
-  </div>
+<header class="topbar">
+  <div class="logo">NEON <b>COAST</b></div>
+  <div class="tag">GTA 6-style cover art studio — your photos, your caption, offline in your browser</div>
+  <span class="chip on" id="faceChip">Face-aware crop: ON</span>
+  <span class="chip gold">VOL. 01</span>
+  <span class="chip" id="faceStatus">Face found in 2 photos</span>
 </header>
-
-<main id="studio">
-  <aside id="photosPane" class="pane">
+<div class="toolbar" id="toolbar">
+  <div class="grp"><span class="lbl">Export size</span>
+    <button class="sizechip" data-size="1920x1080">1920×1080</button>
+    <button class="sizechip on" data-size="1080x1350">1080×1350</button>
+    <button class="sizechip" data-size="1080x1080">1080×1080</button>
+  </div>
+  <div class="grp">
+    <button class="primary" id="exportBtn">Export PNG</button>
+    <button class="primary" id="exportAllBtn">Export All 3 Sizes</button>
+  </div>
+  <div class="grp">
+    <button id="undoBtn" title="Undo">↩ Undo</button>
+    <button id="redoBtn" title="Redo">↪ Redo</button>
+    <button id="surpriseBtn" title="Random look">🎲 Surprise me</button>
+    <button id="recentreBtn" title="Re-run face detection">◎ Re-centre on face</button>
+  </div>
+  <span id="status" role="status"></span>
+</div>
+<div class="layout">
+  <aside id="leftPanel">
     <h2>Your photos</h2>
-    <label class="upload" for="fileInput">＋ Add a photo from your machine
-      <input type="file" id="fileInput" accept="image/*" multiple hidden>
-    </label>
-    <p class="hint">Click a photo, then click a panel on the cover to place it there. Drag a panel to pan, scroll to zoom.</p>
-    <div id="photoGrid" class="photo-grid"></div>
-    <h2>Demo scenes</h2>
-    <div id="sceneList" class="scene-list"></div>
-    <h2>Saved looks</h2>
-    <div class="row">
-      <button class="btn small" id="btnSaveLook" type="button">Save this look</button>
-      <button class="btn small" id="btnLoadLook" type="button">Load saved look</button>
-    </div>
-    <p class="fineprint">Everything runs offline in this browser. Photos never leave your machine. All art is original — no Rockstar logo, artwork or fonts.</p>
+    <p style="font-size:12px;color:var(--mut);margin:0 0 8px">Click a photo to load it into the selected panel. Or upload your own — photos never leave this machine.</p>
+    <label class="chip" style="cursor:pointer;display:inline-block;margin-bottom:10px">＋ Upload photo <input type="file" id="upload" accept="image/*" multiple hidden></label>
+    <div class="thumbs" id="thumbs"></div>
+    <h3>Demo scenes — 1 click</h3>
+    <div id="scenes"></div>
   </aside>
-
-  <section id="previewPane">
-    <div id="coverWrap">
-      <canvas id="cover" width="1080" height="1350"></canvas>
-      <div id="panelHint" class="panel-hint" hidden></div>
+  <main class="stage">
+    <div class="stagewrap"><canvas id="cover" width="1080" height="1350"></canvas></div>
+    <p class="hint" id="hint">Face-aware crop is <b>ON</b> — the pink ◎ marker sits on the detected face. Drag it to nudge the crop, drag the photo to pan, use Zoom to tighten the shot.</p>
+    <div class="panelbar">
+      <label>Panel <select id="panelSel"></select></label>
+      <label>Role <select id="roleSel"></select></label>
+      <label>Zoom <input type="range" id="zoom" min="1" max="3" step="0.05" value="1.25"></label>
+      <button id="faceBtn">◎ Re-centre on face</button>
+      <button id="swapBtn">⇄ Swap photo</button>
     </div>
-    <div id="underBar" class="underbar">
-      <button class="btn" id="btnRecentre" type="button">◎ Re-centre on face</button>
-      <span id="faceStatus" class="face-status">Face-aware crop is on — the anchor marks the face in the selected panel.</span>
-      <label class="toggle"><input type="checkbox" id="tglGrain" checked> Grain</label>
-      <label class="toggle"><input type="checkbox" id="tglVignette" checked> Vignette</label>
-    </div>
-  </section>
-
-  <aside id="controlsPane" class="pane">
+  </main>
+  <aside id="rightPanel">
     <h2>Layout</h2>
-    <div id="layoutList" class="chip-grid"></div>
-    <h2>Grade</h2>
-    <div id="gradeList" class="chip-grid"></div>
-    <h2>Preset looks</h2>
-    <div id="presetList" class="chip-grid"></div>
-    <h2>Caption</h2>
-    <label class="field">Title
-      <input type="text" id="inTitle" value="NEON COAST" maxlength="24">
-    </label>
-    <label class="field">Subtitle (neon script)
-      <input type="text" id="inSubtitle" value="vice city nights" maxlength="40">
-    </label>
-    <label class="field">Tagline
-      <input type="text" id="inTagline" value="TWO LIVES. ONE SUNSET." maxlength="48">
-    </label>
-    <label class="field">Title size
-      <input type="range" id="inTitleSize" min="70" max="150" value="110">
-    </label>
-    <label class="field">Title height
-      <input type="range" id="inTitleY" min="0" max="100" value="62">
-    </label>
-    <h2>Poster furniture</h2>
+    <div class="swatches" id="layouts"></div>
+    <h3>Grade</h3>
+    <div class="swatches" id="grades"></div>
+    <h3>Presets</h3>
+    <div class="swatches" id="presets"></div>
+    <h3>Caption</h3>
+    <div class="ctrl"><label>Title</label><input type="text" id="titleInput" value="VICE CITY NIGHTS" maxlength="28"></div>
+    <div class="ctrl"><label>Neon subtitle</label><input type="text" id="subInput" value="vice city nights" maxlength="40"></div>
+    <div class="ctrl"><label>Tagline</label><input type="text" id="tagInput" value="EVERY SUNSET HAS A PRICE" maxlength="48"></div>
+    <div class="ctrl"><label>Title size <span id="titleSizeVal">100%</span></label><input type="range" id="titleSize" min="70" max="140" value="100"></div>
+    <div class="ctrl"><label>Title height <span id="titleYVal">66%</span></label><input type="range" id="titleY" min="55" max="85" value="66"></div>
+    <div class="ctrl"><label>Press quote</label><input type="text" id="quoteInput" value="“The most electric cover maker of the summer.”" maxlength="80"></div>
+    <h3>Finish</h3>
     <div class="toggles">
-      <label class="toggle"><input type="checkbox" id="tglQuote" checked> Press-quote bar ★★★★★</label>
-      <label class="toggle"><input type="checkbox" id="tglRibbons" checked> Role-tag ribbons</label>
-      <label class="toggle"><input type="checkbox" id="tglSeal" checked> Starburst seal</label>
-      <label class="toggle"><input type="checkbox" id="tglBilling" checked> Billing + credits strip</label>
-      <label class="toggle"><input type="checkbox" id="tglBarcode" checked> Barcode</label>
+      <label><input type="checkbox" id="grain" checked> Grain</label>
+      <label><input type="checkbox" id="vignette" checked> Vignette</label>
+      <label><input type="checkbox" id="seal" checked> Seal</label>
     </div>
-    <h2>Export</h2>
-    <div id="exportList" class="export-list"></div>
-    <button class="btn btn-gold big" id="btnExportOne" type="button">⬇ Export PNG — <span id="exportSizeLabel">1080 × 1350</span></button>
-    <p class="fineprint" id="exportNote">One click, one PNG. “Export All 3 Sizes” in the top bar downloads 1080×1080, 1080×1350 and 1920×1080 together.</p>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button id="savePresetBtn">Save look</button>
+      <button id="loadPresetBtn">Load saved look</button>
+    </div>
+    <p style="font-size:12px;color:var(--mut)">All art here is original — drawn by this app from your photos. No Rockstar logo, artwork or fonts.</p>
   </aside>
-</main>
-
-<footer id="foot">
-  <span>NEON COAST · original cover art, made offline · Anton + Pacifico (SIL OFL) · photos stay on your machine</span>
-</footer>
-
+</div>
+<footer>Neon Coast Cover Studio · offline · photos stay on your machine · export PNG in 6 sizes</footer>
 <script src="app.js"></script>
 </body>
 </html>
