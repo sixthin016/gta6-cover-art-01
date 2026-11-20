@@ -1,49 +1,53 @@
-/* Neon Coast — tiny static server for app/ (development convenience only).
-   Node 22, standard library only. Serves on port 8080, or --port <n>. */
-import { createServer } from 'node:http';
-import { readFile, stat } from 'node:fs/promises';
-import { dirname, join, normalize, extname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+// Tiny static server for app/ — development convenience only.
+// Serves on port 8080, or --port <n>. Refuses any path outside app/.
+import { createServer } from "node:http";
+import { readFile } from "node:fs/promises";
+import { extname, join, normalize, resolve } from "node:path";
+import { fileURLToPath } from "node:url";
 
-const here = dirname(fileURLToPath(import.meta.url));
-const root = join(here, 'app');
+const appRoot = resolve(join(fileURLToPath(new URL(".", import.meta.url)), "app"));
 const args = process.argv.slice(2);
 let port = 8080;
-const pi = args.indexOf('--port');
-if (pi >= 0 && args[pi + 1]) port = Number(args[pi + 1]) || 8080;
+const portIdx = args.indexOf("--port");
+if (portIdx !== -1 && args[portIdx + 1]) port = Number(args[portIdx + 1]) || 8080;
 
 const MIME = {
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.mjs': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.json': 'application/json; charset=utf-8',
-  '.png': 'image/png',
-  '.jpg': 'image/jpeg',
-  '.jpeg': 'image/jpeg',
-  '.webp': 'image/webp',
-  '.ttf': 'font/ttf',
-  '.otf': 'font/otf',
-  '.woff': 'font/woff',
-  '.woff2': 'font/woff2',
-  '.svg': 'image/svg+xml',
+  ".html": "text/html; charset=utf-8",
+  ".js": "text/javascript; charset=utf-8",
+  ".mjs": "text/javascript; charset=utf-8",
+  ".css": "text/css; charset=utf-8",
+  ".json": "application/json; charset=utf-8",
+  ".png": "image/png",
+  ".jpg": "image/jpeg",
+  ".jpeg": "image/jpeg",
+  ".webp": "image/webp",
+  ".ttf": "font/ttf",
+  ".otf": "font/otf",
+  ".woff": "font/woff",
+  ".woff2": "font/woff2",
+  ".svg": "image/svg+xml",
 };
 
-createServer(async (req, res) => {
+const server = createServer(async (req, res) => {
   try {
-    const url = new URL(req.url || '/', 'http://localhost');
-    let path = decodeURIComponent(url.pathname);
-    if (path === '/') path = '/index.html';
-    const file = normalize(join(root, path));
-    if (!file.startsWith(root + '/') && file !== root) {
-      res.writeHead(403); res.end('forbidden'); return;
+    const url = new URL(req.url ?? "/", "http://localhost");
+    let rel = decodeURIComponent(url.pathname);
+    if (rel === "/") rel = "/index.html";
+    const filePath = resolve(join(appRoot, normalize(rel)));
+    if (!filePath.startsWith(appRoot + "/") && filePath !== appRoot) {
+      res.writeHead(403, { "content-type": "text/plain" });
+      res.end("Forbidden\n");
+      return;
     }
-    const info = await stat(file);
-    if (!info.isFile()) { res.writeHead(404); res.end('not found'); return; }
-    const body = await readFile(file);
-    res.writeHead(200, { 'content-type': MIME[extname(file)] || 'application/octet-stream', 'content-length': body.length });
-    res.end(body);
+    const data = await readFile(filePath);
+    res.writeHead(200, { "content-type": MIME[extname(filePath)] ?? "application/octet-stream" });
+    res.end(data);
   } catch {
-    res.writeHead(404); res.end('not found');
+    res.writeHead(404, { "content-type": "text/plain" });
+    res.end("Not found\n");
   }
-}).listen(port, () => console.log(`Neon Coast studio at http://localhost:${port}`));
+});
+
+server.listen(port, () => {
+  console.log(`Neon Coast studio at http://localhost:${port}`);
+});
