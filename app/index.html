@@ -1,133 +1,128 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Neon Coast Cover Studio — GTA 6-style cover maker</title>
-<link rel="stylesheet" href="style.css">
+<title>Neon Coast Cover Studio — real-photo GTA 6 cover maker</title>
+<link rel="stylesheet" href="./style.css">
 </head>
 <body>
 <header class="topbar">
   <div class="brand">
     <span class="brand-mark">NC</span>
     <div>
-      <h1>Neon Coast <em>Cover Studio</em></h1>
-      <p>Turn any photo into a Vice City neon cover — 100% offline, photos never leave your machine.</p>
+      <h1>Neon Coast Cover Studio</h1>
+      <p>Real photos in, GTA-style cover art out — offline, on your machine.</p>
     </div>
   </div>
   <div class="top-actions">
-    <button id="undoBtn" class="btn ghost" title="Undo">↩ Undo</button>
-    <button id="redoBtn" class="btn ghost" title="Redo">↪ Redo</button>
-    <button id="savePresetBtn" class="btn ghost">★ Save look</button>
-    <button id="exportAllBtn" class="btn primary">⬇ Export all sizes</button>
+    <button id="undo" type="button" title="Undo">↩ Undo</button>
+    <button id="redo" type="button" title="Redo">↪ Redo</button>
+    <button id="surprise" type="button" class="accent" title="Random layout, grade and cast">🎲 Surprise me</button>
+    <button id="exportAll" type="button" class="primary" title="Download all three post sizes at once">⬇ Export All 3 Sizes</button>
   </div>
 </header>
 
-<main class="studio">
-  <!-- LEFT: photos + scenes -->
-  <aside class="panel left">
+<main class="app">
+  <aside class="controls" aria-label="Cover controls">
     <section>
-      <h2>1 · Photos</h2>
-      <label class="upload">
-        <input type="file" id="photoInput" accept="image/*" multiple hidden>
-        <span>＋ Load your photo(s)</span>
+      <h2>1 · Photos — click one to fill the selected panel</h2>
+      <div id="library" class="library" role="listbox" aria-label="Photo library"></div>
+      <label class="upload">＋ Upload your own photo(s)
+        <input id="upload" type="file" accept="image/*" multiple>
       </label>
-      <div class="thumb-row" id="photoThumbs"></div>
-      <p class="hint">Click a photo, then click a panel slot below to place it. Drag on the cover to pan, use zoom to crop.</p>
-      <div class="slot-grid" id="slotGrid"></div>
-      <div class="crop-controls">
-        <label>Zoom <input type="range" id="zoomSlider" min="1" max="3" step="0.05" value="1"></label>
-        <label>Pan X <input type="range" id="panXSlider" min="-0.5" max="0.5" step="0.01" value="0"></label>
-        <label>Pan Y <input type="range" id="panYSlider" min="-0.5" max="0.5" step="0.01" value="0"></label>
-        <button id="resetCropBtn" class="btn ghost small">Reset crop</button>
+      <p class="hint">Photos stay on your machine — nothing is uploaded. The 8 bundled photos load with the app.</p>
+    </section>
+
+    <section>
+      <h2>2 · Selected panel</h2>
+      <p id="panelInfo" class="hint">Panel 1 · THE DRIVER — drag to pan, scroll to zoom.</p>
+      <label class="slider-label">Crop zoom <span id="zoomValue">100%</span>
+        <input id="zoom" type="range" min="100" max="260" value="100">
+      </label>
+      <div class="row">
+        <button id="useDemo" type="button">Use demo art</button>
+        <button id="usePhoto" type="button">Use library photo</button>
+      </div>
+      <label>Role tag
+        <input id="role" type="text" maxlength="24" value="THE DRIVER">
+      </label>
+    </section>
+
+    <section>
+      <h2>3 · Title &amp; words</h2>
+      <label>Cover title
+        <input id="title" type="text" maxlength="28" value="NEON COAST">
+      </label>
+      <label>Script subtitle
+        <input id="subtitle" type="text" maxlength="48" value="five friends · one coast · no way back">
+      </label>
+      <label>Press quote
+        <input id="quote" type="text" maxlength="48" value="PURE GOLDEN-HOUR MAYHEM">
+      </label>
+      <label>Tagline pill
+        <input id="tagline" type="text" maxlength="48" value="FIVE FRIENDS · ONE COAST · NO WAY BACK">
+      </label>
+      <label>Billing block
+        <input id="billing2" type="text" maxlength="64" value="STARRING YOU · SHOT ON YOUR OWN CAMERA">
+      </label>
+    </section>
+
+    <section>
+      <h2>4 · Layout</h2>
+      <div id="layouts" class="chip-grid"></div>
+    </section>
+
+    <section>
+      <h2>5 · Colour grade</h2>
+      <div id="grades" class="chip-grid"></div>
+    </section>
+
+    <section>
+      <h2>6 · Presets</h2>
+      <div id="presets" class="chip-grid"></div>
+    </section>
+
+    <section>
+      <h2>7 · Export size</h2>
+      <div id="sizes" class="chip-row" role="group" aria-label="Export size"></div>
+      <div class="row">
+        <button id="exportOne" type="button" class="primary">Export this size PNG</button>
       </div>
     </section>
+
     <section>
-      <h2>Demo scenes</h2>
-      <p class="hint">No photo? Load a painted scene with one click.</p>
-      <div class="scene-grid" id="sceneGrid"></div>
+      <h2>Poster furniture</h2>
+      <div class="toggles">
+        <label><input type="checkbox" data-furniture="quote" checked> Press quote</label>
+        <label><input type="checkbox" data-furniture="stars" checked> 5 gold stars</label>
+        <label><input type="checkbox" data-furniture="vol" checked> VOL. 01 tab</label>
+        <label><input type="checkbox" data-furniture="tagline" checked> Tagline pill</label>
+        <label><input type="checkbox" data-furniture="roles" checked> Role tags</label>
+        <label><input type="checkbox" data-furniture="billing" checked> Billing block</label>
+        <label><input type="checkbox" data-furniture="seal" checked> Gold seal</label>
+        <label><input type="checkbox" data-furniture="barcode" checked> Barcode</label>
+      </div>
     </section>
+
+    <p id="status" role="status">Loading your photos…</p>
   </aside>
 
-  <!-- CENTER: live cover -->
   <section class="stage">
     <div class="stage-head">
-      <span id="stageLabel">Live cover — Diagonal Duo · Duotone</span>
-      <span class="pill" id="sizePill">1080 × 1350</span>
+      <span id="stageLabel">Preview · 1080 × 1350</span>
+      <span class="hint">Click a panel to select it · drag to pan · scroll to zoom</span>
     </div>
-    <div class="canvas-wrap">
-      <canvas id="cover" width="1080" height="1350"></canvas>
-      <div class="export-preview" id="exportPreview" hidden>
-        <p>Exported PNG</p>
-        <canvas id="exportThumb" width="270" height="338"></canvas>
-        <span id="exportMeta"></span>
-      </div>
-    </div>
-    <p class="stage-hint">Drag on the cover to pan the active panel · scroll to zoom · everything updates live.</p>
-    <div class="mini-strip" id="layoutStrip"></div>
+    <canvas id="cover" width="1080" height="1350" aria-label="Cover preview"></canvas>
   </section>
-
-  <!-- RIGHT: controls -->
-  <aside class="panel right">
-    <nav class="tabs" id="tabs">
-      <button data-tab="layout" class="active">Layouts</button>
-      <button data-tab="grade">Grades</button>
-      <button data-tab="preset">Presets</button>
-      <button data-tab="caption">Caption</button>
-      <button data-tab="export">Export</button>
-    </nav>
-
-    <section class="tab-page" data-page="layout">
-      <h2>Layout <span class="count">9</span></h2>
-      <div class="btn-grid" id="layoutGrid"></div>
-      <p class="hint">Switching layout re-flows the same photos live — nothing is lost.</p>
-    </section>
-
-    <section class="tab-page" data-page="grade" hidden>
-      <h2>Grade <span class="count">7</span></h2>
-      <div class="btn-grid" id="gradeGrid"></div>
-      <div class="swatch-row" id="gradeSwatches"></div>
-      <label class="field">Quick caption — title <input type="text" id="titleInput2" value="GTA VI" maxlength="14"></label>
-      <label class="field">Quick caption — subtitle <input type="text" id="subtitleInput2" value="NEON COAST" maxlength="24"></label>
-      <label class="toggle"><input type="checkbox" id="grainToggle" checked> Film grain</label>
-      <label class="toggle"><input type="checkbox" id="vignetteToggle" checked> Vignette</label>
-    </section>
-
-    <section class="tab-page" data-page="preset" hidden>
-      <h2>Presets <span class="count">6</span></h2>
-      <div class="preset-list" id="presetList"></div>
-      <p class="hint">A preset sets layout + grade + lettering in one click. Saved looks live in this browser (localStorage).</p>
-      <div id="savedList"></div>
-    </section>
-
-    <section class="tab-page" data-page="caption" hidden>
-      <h2>Caption &amp; title</h2>
-      <label class="field">Main title <input type="text" id="titleInput" value="GTA VI" maxlength="14"></label>
-      <label class="field">Subtitle <input type="text" id="subtitleInput" value="NEON COAST" maxlength="24"></label>
-      <label class="field">Caption line <input type="text" id="captionInput" value="Welcome back to Vice City" maxlength="48"></label>
-      <label class="field">Badge ribbon <input type="text" id="badgeInput" value="VICE CITY" maxlength="16"></label>
-      <label>Title size <input type="range" id="titleSizeSlider" min="60" max="200" step="2" value="128"></label>
-      <label>Title tilt <input type="range" id="tiltSlider" min="-12" max="12" step="1" value="-4"></label>
-      <label>Heat meter <input type="range" id="heatSlider" min="0" max="5" step="1" value="4"></label>
-      <p class="hint">Chrome-metallic lettering, tilted in the lower third — the cover look.</p>
-    </section>
-
-    <section class="tab-page" data-page="export" hidden>
-      <h2>Export PNG</h2>
-      <div class="btn-grid" id="exportGrid"></div>
-      <button id="exportAllBtn2" class="btn primary wide">⬇ Export all 6 sizes at once</button>
-      <p class="hint" id="exportStatus">One click → files download. No upload, no watermark.</p>
-      <h3>Demo scene gallery</h3>
-      <div class="scene-grid small" id="sceneGrid2"></div>
-    </section>
-  </aside>
 </main>
 
 <footer class="foot">
-  <span>Neon Coast Cover Studio — original fan-made art. No Rockstar Games logo, artwork or fonts.</span>
-  <span id="statusLine">Ready.</span>
+  <span>Offline — no uploads, no tracking, no watermark.</span>
+  <span>Fonts: Anton &amp; Pacifico (SIL Open Font License), bundled locally.</span>
+  <span>Photos: bundled library + your uploads, kept on your machine.</span>
 </footer>
 
-<script src="app.js"></script>
+<script type="module" src="./src/main.js"></script>
 </body>
 </html>

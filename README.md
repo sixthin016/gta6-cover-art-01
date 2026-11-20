@@ -1,45 +1,37 @@
 # Neon Coast Cover Studio
 
-[![make.fun · gta6-cover-art-01](https://make.fun/badge/gta6-cover-art-01.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
-[![rank](https://make.fun/badge/gta6-cover-art-01/sixthin016/gta6-cover-art-01/rank.svg)](https://make.fun/bounty/gta6-cover-art-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
-[![reward](https://make.fun/badge/gta6-cover-art-01/sixthin016/gta6-cover-art-01/reward.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+[![make.fun](https://make.fun/badge/gta6-cover-art-01.svg)](https://make.fun/c/gta6-cover-art-01)
+[![rank](https://make.fun/badge/gta6-cover-art-01/sixthin016/gta6-cover-art-01/rank.svg)](https://make.fun/c/gta6-cover-art-01)
+[![reward](https://make.fun/badge/gta6-cover-art-01/sixthin016/gta6-cover-art-01/reward.svg)](https://make.fun/c/gta6-cover-art-01)
 
-An offline browser studio that turns any photo into a GTA 6-style cover: a
-multi-panel poster with a Vice City neon-sunset grade, chrome tilted title,
-and a grid-collage strip — exported as a PNG to share.
+A real-photo GTA 6 cover art maker — an offline web app that turns your photos into a multi-panel, Vice City neon-sunset poster and exports it as a PNG to share. Built for the [Make GTA 6 Cover Art competition on make.fun](https://make.fun/c/gta6-cover-art-01).
 
-## What is inside
+## What it does
 
-- **9 layouts** — Diagonal Duo, Four-Panel Grid, Hero + Three, Full-Bleed
-  Single, Nine-Panel Cover, Tilted Snapshot, Grid Collage 2×2, 3-Panel Split,
-  Poster Band. Switching re-flows the same photos live.
-- **7 grades** — Neon Duotone, Vice Sunset, Magenta–Cyan, Heat Wave, Palm
-  Dusk, Chrome Night, Halftone Ink, applied across the whole cover.
-- **6 presets** — one-click looks combining layout, grade and lettering.
-- **Photo tools** — upload any photo (or use the two bundled samples), place
-  it in any panel, drag to pan, scroll or slide to zoom and crop.
-- **Caption editing** — chrome-metallic title with a distressed edge, neon
-  subtitle, caption line, badge ribbon and a 5-star heat meter.
-- **Export** — PNG in 6 sizes (1080×1080, 1080×1350, 1920×1080, 1080×1920
-  story, 1200×628, 1920×1920) plus one-click export-all.
-- **Polish** — undo/redo, film grain and vignette toggles, save/load looks in
-  localStorage, and a gallery of 9 painted demo scenes to load in one click.
-- Everything is drawn in code on a canvas. All art is original — no Rockstar
-  Games logo, official artwork or fonts anywhere in the app or screenshots.
+- **Real photos first.** 8 photorealistic photos load with the app (a bespectacled driver at golden hour, a couple on a neon street, a sports car, a speedboat, a palm beach, and more) and fill the panels the moment the app opens. Upload your own photos too — they never leave your machine.
+- **Striped chrome 3D titles.** The cover title is drawn per glyph in Anton with a white→yellow→orange→magenta→purple sunset stripe, a sharp white keyline, a dark-magenta 3D extrusion, and sparkles — plus a glowing Pacifico script subtitle.
+- **Full poster furniture.** Press-quote bar with 5 gold stars, VOL. 01 tab, tagline pill, per-panel role tags (THE DRIVER, THE INSIDER, THE COURIER…), billing block, gold "ORIGINAL COVER ART" seal, and a barcode — every piece editable and toggleable.
+- **9 layouts, 7 grades, 6 presets.** Slanted comic panels, Hero Duo, Triptych, Whole-Cast 3×3 grid, Spotlight, Film Strip, Split Run, Poster Lead, Classic Trio — each with 7 colour grades from Sunset to Neon Vice to Mono Chrome.
+- **Crop and position per panel.** Click a panel to select it, drag to pan, scroll or slide to zoom, set its role tag, or swap it to one of 9 procedural demo scenes.
+- **Fast to PNG.** One click exports all three post sizes — 1920×1080, 1080×1350, 1080×1080 — plus 3 more sizes, with undo/redo and a "Surprise me" randomizer.
 
-## How to run it
+## Run it
 
 ```sh
 node serve.ts
+# open http://localhost:8080
 ```
 
-Then open http://localhost:8080 in a browser. Load a photo, pick a layout
-and grade, edit the caption, and hit **Export all sizes**.
+No build step, no network request: every script, font, and photo is a file under `app/`. Fonts are Anton and Pacifico under the SIL Open Font License, bundled in `app/fonts/`. The two kit sample photos (`boulevard.jpg`, `pier.jpg`) were made for make.fun and are free to use; the other six photos were made with an image model for this entry.
 
-## Build the dossier
+## Hand it in
 
 ```sh
 mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
 ```
 
-This copies `app/` and `screenshots/` into `out/` and writes `out/dossier.json`.
+`main.ts` copies `app/` and `screenshots/` to the output directory and writes `dossier.json` with the vendored make.fun library. Two runs produce byte-identical output.
+
+## License
+
+MIT — see [LICENSE](LICENSE).

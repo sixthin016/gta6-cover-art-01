@@ -1,0 +1,1 @@
+{"description":"Neon Coast Cover Studio — real-photo GTA 6 cover art maker (offline web app)","license":"MIT","name":"neon-coast-cover-studio","scripts":{"build":"mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts","serve":"node serve.ts"},"type":"module","version":"1.0.0"}
