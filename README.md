@@ -8,13 +8,14 @@
 
 ## What it does
 
-- **7 layouts** — Poster 5-Panel, Grid 3×2, Hero Single, Story 1080×1350, Wide Cinematic, Comic Strip, Magazine.
-- **6 colour grades** — Sunset, Neon, Noir, Pastel, Poster-Ink, Original.
-- **6 rich procedural scenes** — Vice Boulevard sunset, Neon Pier, Downtown Night, Beach Palms, Casino Strip, Swamp Airboat — each painted in layers (layered sky, sun glow + haze, lit-window skylines, palm silhouettes, wet-road reflections, neon signs, ferris wheel, sea, clouds, birds), plus a comic hero sample: a rim-lit driver-and-partner duo at sunset.
-- **Any photo** — load up to 6 photos, one per panel; drag to pan, scroll to zoom each; fill all panels with one photo or several; edit title, subtitle, caption and issue line.
-- **4 one-click presets** — Sunset Heist, Neon Nights, Noir Drive, Vice Classic.
-- **Chrome titles** — sunset-chrome gradient lettering with a thick outline, halftone dots and a white rim, plus a LEONIDA PRESS badge and issue line.
-- **Export PNG in 4 sizes** — 1080×1080, 1080×1350, 1920×1080, 1080×1920.
+- **9 layouts** — Poster 5-Panel, Grid 3×2, Hero Single, Story 1080×1350, Wide Cinematic, Comic Strip, Magazine, Slanted Comic, Whole-Cast Grid 3×3.
+- **7 colour grades** — Sunset, Neon, Noir, Pastel, Poster-Ink, Original, Vice Gold.
+- **9 rich procedural scenes + hero** — Vice Boulevard sunset, Neon Pier, Downtown Night, Beach Palms, Casino Strip, Swamp Airboat, Highway Police Chase, Ocean Drive Art-Deco Night, Helicopter over the Bay — each painted in layers (layered sky, sun glow + haze, lit-window skylines, palm silhouettes, wet-road reflections, neon signs, ferris wheel, sea, clouds, birds), plus a hero scene: a 3/4-view driver-and-partner duo with faces, a hero sports car, a helicopter and the skyline at sunset.
+- **Any photo** — load up to 6 photos, one per panel; drag to pan, scroll to zoom each, crop-zoom slider + reset; fill all panels with one photo or several; edit title, subtitle, caption, issue line and every panel label.
+- **6 one-click presets + Surprise me** — Sunset Heist, Neon Nights, Noir Drive, Vice Classic, Whole Cast, Slanted Chase, plus a randomizer that shuffles layout, grade and scenes.
+- **Demo photo library** — 9 scene thumbnails, tap one to use it in the selected panel.
+- **Chrome titles** — sunset-chrome gradient lettering with a thick outline, halftone dots and a white rim, a giant "VI" watermark, plus a LEONIDA PRESS badge and issue line.
+- **Export PNG in 6 sizes** — 1080×1080, 1080×1350, 1920×1080, 1080×1920, 1200×628, 1600×900.
 
 ## Run it
 

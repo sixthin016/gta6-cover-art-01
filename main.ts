@@ -1,9 +1,8 @@
-// Leonida Press — gta6-cover-art-01 entry program (Node 22, standard library only).
-// Copies app/ and screenshots/ from beside this file to /output and writes
-// /output/dossier.json with the vendored make.fun library.
-// Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
-//   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
-
+// Leonida Press r5 — hands the app in: copies app/ and screenshots/ from
+// beside this file to /output and writes /output/dossier.json with the
+// vendored make.fun library. Node 22, standard library only.
+// Outside the grader, MAKEFUN_OUTPUT_DIR stands in for /output:
+//   MAKEFUN_OUTPUT_DIR=out node main.ts
 import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';

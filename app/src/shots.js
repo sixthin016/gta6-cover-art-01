@@ -1,15 +1,33 @@
-// Fixed scenes for screenshots: ?shot=editor shows the page with demo photos loaded;
-// ?shot=cover shows the exported cover alone, at the size the query asks for.
-// window.__shotReady is set once painted.
-export async function runShot(shot, query, render) {
-  const canvas = document.getElementById('cover');
-  if (shot === 'cover') {
-    document.body.classList.add('shot-cover');
-    const w = Number(query.get('w')) || 1080;
-    const h = Number(query.get('h')) || 1080;
-    canvas.width = w; canvas.height = h;
-    if (render) render();
+// Fixed scenes for screenshots: ?shot=cover shows the cover alone at the
+// requested size; ?shot=editor shows the editor with demo art loaded.
+// window.__shotReady is set once the cover has been painted twice.
+import { PRESETS, defaultPanels } from './cover.js';
+
+export function runShot(query, state, ui) {
+  const presetKey = query.get('preset') || 'sunset';
+  const layoutKey = query.get('layout');
+  const gradeKey = query.get('grade');
+  if (presetKey && PRESETS[presetKey]) ui.applyPreset(presetKey);
+  if (layoutKey) {
+    state.layout = layoutKey;
+    state.panels = defaultPanels(layoutKey);
   }
-  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
-  window.__shotReady = true;
+  if (gradeKey) state.grade = gradeKey;
+  if (query.get('title')) state.title = query.get('title');
+  if (query.get('subtitle')) state.subtitle = query.get('subtitle');
+  if (query.get('caption')) state.caption = query.get('caption');
+  if (query.get('shot') === 'cover') document.body.classList.add('shot-cover');
+  document.getElementById('title').value = state.title;
+  document.getElementById('subtitle').value = state.subtitle;
+  document.getElementById('caption').value = state.caption;
+  document.getElementById('issue').value = state.issue;
+  document.getElementById('layout').value = state.layout;
+  document.getElementById('grade').value = state.grade;
+  ui.syncPanelEditor();
+  ui.redraw();
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    ui.redraw();
+    window.__shotReady = true;
+    document.title = 'shot-ready';
+  }));
 }
