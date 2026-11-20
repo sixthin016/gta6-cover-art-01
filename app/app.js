@@ -77,7 +77,7 @@ const state = {
   tag: 'EVERY SUNSET HAS A PRICE',
   quote: '“The most electric cover maker of the summer.”',
   titleSize: 100, titleY: 66, grain: true, vignette: true, seal: true,
-  faceOn: true, selected: 0, exportSize: '1080x1350',
+  faceOn: true, selected: 0, selTouched: false, exportSize: '1080x1350',
   panels: [],
 };
 let undoStack = [], redoStack = [];
@@ -314,7 +314,9 @@ function renderTo(g, W, H, preview) {
     g.fillStyle = '#fff'; g.font = `bold ${Math.round(rh * .52)}px Anton, sans-serif`; g.textAlign = 'left'; g.textBaseline = 'middle';
     g.fillText(r.panel.role || 'THE DRIVER', rx + 12, ry + rh / 2 + 1);
     g.restore();
-    if (preview && i === state.selected) { g.save(); g.strokeStyle = '#19d3ff'; g.lineWidth = 3; g.setLineDash([10, 6]); g.strokeRect(r.x + 2, r.y + 2, r.w - 4, r.h - 4); g.restore(); }
+    /* selection outline: editor-only, and only after the user explicitly
+       picks a panel — never on a fresh load / screenshot, never in clean/export renders */
+    if (preview && i === state.selected && state.selTouched && !document.body.classList.contains('clean')) { g.save(); g.strokeStyle = '#19d3ff'; g.lineWidth = 3; g.setLineDash([10, 6]); g.strokeRect(r.x + 2, r.y + 2, r.w - 4, r.h - 4); g.restore(); }
   });
   /* press-quote bar on top */
   const qh = H * .042;
@@ -408,7 +410,7 @@ function drawAnchorMarkers() {
     ctx.fillStyle = '#ff2e88'; ctx.beginPath(); ctx.arc(mx, my, 5, 0, 7); ctx.fill();
     ctx.fillStyle = '#fff'; ctx.font = 'bold 15px system-ui, sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     ctx.fillText('◎', mx, my - 26);
-    if (i === state.selected) { ctx.fillStyle = '#19d3ff'; ctx.font = 'bold 13px system-ui, sans-serif'; ctx.fillText(p.faceFound ? 'FACE LOCKED' : 'NO FACE — CENTRE', mx, my + 30); }
+    if (i === state.selected && state.selTouched) { ctx.fillStyle = '#19d3ff'; ctx.font = 'bold 13px system-ui, sans-serif'; ctx.fillText(p.faceFound ? 'FACE LOCKED' : 'NO FACE — CENTRE', mx, my + 30); }
   });
   ctx.restore();
 }
@@ -549,7 +551,7 @@ function wire() {
     render();
   };
   $('recentreBtn').onclick = recentre; $('faceBtn').onclick = recentre;
-  $('panelSel').onchange = e => { state.selected = +e.target.value; syncPanelBar(); render(); };
+  $('panelSel').onchange = e => { state.selected = +e.target.value; state.selTouched = true; syncPanelBar(); render(); };
   $('roleSel').onchange = e => { pushUndo(); state.panels[state.selected].role = e.target.value; render(); };
   $('zoom').oninput = e => { state.panels[state.selected].zoom = +e.target.value; render(); };
   $('zoom').onchange = () => pushUndo();
@@ -608,9 +610,9 @@ function wire() {
       const r = rects[i], p = r.panel;
       if (!p || !p.img) continue;
       const ap = anchorPos(r, p);
-      if (Math.hypot(pt.x - ap.x, pt.y - ap.y) < 34) { state.selected = i; drag = { kind: 'anchor', i, x: pt.x, y: pt.y }; canvas.setPointerCapture(e.pointerId); syncPanelBar(); render(); return; }
+      if (Math.hypot(pt.x - ap.x, pt.y - ap.y) < 34) { state.selected = i; state.selTouched = true; drag = { kind: 'anchor', i, x: pt.x, y: pt.y }; canvas.setPointerCapture(e.pointerId); syncPanelBar(); render(); return; }
       if (pt.x >= r.x && pt.x <= r.x + r.w && pt.y >= r.y && pt.y <= r.y + r.h) {
-        state.selected = i; drag = { kind: 'pan', i, x: pt.x, y: pt.y, ox: p.ox || 0, oy: p.oy || 0 };
+        state.selected = i; state.selTouched = true; drag = { kind: 'pan', i, x: pt.x, y: pt.y, ox: p.ox || 0, oy: p.oy || 0 };
         canvas.setPointerCapture(e.pointerId); syncPanelBar(); render(); return;
       }
     }
@@ -647,6 +649,9 @@ async function boot() {
   if (q.get('shot') === 'facecrop') { state.selected = 0; state.layout = 'heroThree'; }
   if (q.get('shot') === 'export') { state.layout = 'comic'; state.grade = 'sunset'; }
   if (q.get('shot') === 'variant') { state.layout = 'nineGrid'; state.grade = 'chromenight'; state.title = 'SKYLINE'; state.sub = 'skyline'; }
+  /* shot mode: deselect — no selection outline on any panel in screenshots
+     (face anchor markers still draw in shot 2 via drawAnchorMarkers) */
+  if (q.get('shot')) state.selected = -1;
   const scene = q.get('scene');
   const photos = scene ? (SCENES.find(s => s.label.toLowerCase().replace(/\s/g, '') === scene) || {}).photos
     : (q.get('shot') === 'export' ? [2, 0, 5] : null);
