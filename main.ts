@@ -1,28 +1,37 @@
-// Leonida Press r5 — hands the app in: copies app/ and screenshots/ from
-// beside this file to /output and writes /output/dossier.json with the
-// vendored make.fun library. Node 22, standard library only.
-// Outside the grader, MAKEFUN_OUTPUT_DIR stands in for /output:
-//   MAKEFUN_OUTPUT_DIR=out node main.ts
-import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
-import { buildDossier } from './vendor/makefun-app.ts';
+/* Neon Coast Cover Studio — entry program.
+   Copies app/ and screenshots/ into the output directory, then builds
+   the dossier with the vendored make.fun library and writes dossier.json. */
+import { buildDossier } from "./vendor/makefun-app.ts";
+import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
+import { fileURLToPath } from "node:url";
+import { dirname, join } from "node:path";
 
-const here = fileURLToPath(new URL('.', import.meta.url));
-const out = process.env.MAKEFUN_OUTPUT_DIR ?? '/output';
+const repoDir = dirname(fileURLToPath(import.meta.url));
+const outDir = process.env.MAKEFUN_OUTPUT_DIR || "/output";
 
-mkdirSync(out, { recursive: true });
-cpSync(join(here, 'app'), join(out, 'app'), { recursive: true });
-mkdirSync(join(out, 'screenshots'), { recursive: true });
-if (existsSync(join(here, 'screenshots'))) cpSync(join(here, 'screenshots'), join(out, 'screenshots'), { recursive: true });
+mkdirSync(outDir, { recursive: true });
 
-writeFileSync(
-  join(out, 'dossier.json'),
-  buildDossier(out, {
-    text_max_bytes: 163840,
-    screenshots: { max: 4, max_bytes: 262144 },
-    app_max_files: 993,
-    app_max_bytes: 50331648,
-    app_path_max_bytes: 1000,
-  }),
-);
+for (const name of ["app", "screenshots"]) {
+  const src = join(repoDir, name);
+  const dst = join(outDir, name);
+  if (!existsSync(src)) continue;
+  rmSync(dst, { recursive: true, force: true });
+  cpSync(src, dst, { recursive: true });
+}
+
+const dossier = buildDossier(outDir, {
+  text_max_bytes: 163840,
+  screenshots_max: 4,
+  screenshot_max_bytes: 262144,
+  app_max_files: 993,
+  app_max_bytes: 50331648,
+});
+
+const text =
+  typeof dossier === "string"
+    ? dossier
+    : dossier instanceof Uint8Array
+      ? new TextDecoder().decode(dossier)
+      : JSON.stringify(dossier, null, 2);
+writeFileSync(join(outDir, "dossier.json"), text);
+console.log(`dossier written: ${join(outDir, "dossier.json")} (${text.length} bytes)`);
